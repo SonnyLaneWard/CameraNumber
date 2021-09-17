@@ -9,8 +9,13 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.*;
 import javafx.stage.Stage;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Scanner;
+
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.StageStyle;
@@ -34,6 +39,18 @@ public class CameraMain extends  Application {
 
         TextField number = new TextField();
         number.setFont(Font.font("Lucida Grande", FontWeight.BOLD, FontPosture.REGULAR, 18));
+        number.setMaxWidth(100);
+        TextField ip = new TextField();
+        ip.setFont(Font.font("Lucida Grande", FontWeight.BOLD, FontPosture.REGULAR, 18));
+        ip.setText("192.168.0.216");
+        Label ipl = new Label();
+       // ipl.setFont(Font.font("Lucida Grande", FontWeight.BOLD, FontPosture.REGULAR, 18));
+       // ipl.setText("192.168.23.9");
+        TextArea ipout = new TextArea();
+        ipout.setFont(Font.font("Lucida Grande", FontWeight.BOLD, FontPosture.REGULAR, 18));
+        ipout.setMaxHeight(200);
+
+
         Button search = new Button();
         search.setText("   Search   ");
         search.setTextAlignment(TextAlignment.CENTER);
@@ -47,11 +64,31 @@ public class CameraMain extends  Application {
                 "    -fx-padding: 7 30 7 30;\n" +
                 "    -fx-text-fill: #202224;\n" +
                 "    -fx-font-family: \"Lucida Grande\";\n" +
-                "    -fx-font-size: 16px;\n" +
+                "    -fx-font-size: 20px;\n" +
                 "    -fx-text-fill: gray;\n" +
                 "}");
+
+        Button ping = new Button();
+        ping.setText("   Ping   ");
+        ping.setTextAlignment(TextAlignment.CENTER);
+        ping.setStyle("#iphone {\n" +
+                "    -fx-background-color: \n" +
+                "        #516175,\n" +
+                "        linear-gradient(#303842 0%, #3e5577 20%, #375074 100%),\n" +
+                "        linear-gradient(#768aa5 0%, #849cbb 5%, #5877a2 50%, #486a9a 51%, #4a6c9b 100%);\n" +
+                "    -fx-background-insets: 0 0 -1 0,0,1;\n" +
+                "    -fx-background-radius: 5,5,4;\n" +
+                "    -fx-padding: 7 30 7 30;\n" +
+                "    -fx-text-fill: #202224;\n" +
+                "    -fx-font-family: \"Lucida Grande\";\n" +
+                "    -fx-font-size: 20px;\n" +
+                "    -fx-text-fill: gray;\n" +
+                "}");
+
+
         TextArea INFO = new TextArea();
         INFO.setFont(Font.font("Lucida Grande", FontWeight.BOLD, FontPosture.REGULAR, 18));
+
         TextArea VM = new TextArea();
         VM.setFont(Font.font("Lucida Grande", FontWeight.BOLD, FontPosture.REGULAR, 18));
 
@@ -66,6 +103,10 @@ public class CameraMain extends  Application {
         gridpane.add(search,1,1);
         gridpane.add(INFO,0,2);
         gridpane.add(VM,0,3);
+        //gridpane.add(ipl,0,4);
+        gridpane.add(ip,0,4);
+        gridpane.add(ping,1,4);
+        gridpane.add(ipout,0,5);
 
 
 
@@ -76,7 +117,7 @@ public class CameraMain extends  Application {
 
         stage.setTitle("REOCAM NUMBER");
         stage.setWidth(1000);
-        stage.setHeight(800);
+        stage.setHeight(1000);
         stage.initStyle(StageStyle.UTILITY);
         stage.setResizable(false);
 
@@ -121,6 +162,34 @@ public class CameraMain extends  Application {
 
 
         });
+
+
+        /////////////////////////////////////////
+        ping.setOnAction(event -> {
+        try {
+            String ipnew;
+
+            ipnew = ip.getText();
+           // ipnew = "192.168.0.216";
+
+
+            String line;
+            String[] cmd = {"cmd.exe", "/c", "ping" + " " + ipnew};
+
+            Process p = Runtime.getRuntime().exec(cmd);
+            BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream(),"866"));
+
+           for (int i = 0; i < 6; i++) {
+                line = input.readLine();
+               ipout.appendText(line + "\n");
+            }
+            input.close();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        });
+        ////////////////////////////////////////////
 
 
 
