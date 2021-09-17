@@ -1,5 +1,6 @@
 import javafx.application.Application;
-import javafx.geometry.HPos;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -13,12 +14,11 @@ import javafx.stage.Stage;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Scanner;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.StageStyle;
+
 
 
 
@@ -40,9 +40,11 @@ public class CameraMain extends  Application {
         TextField number = new TextField();
         number.setFont(Font.font("Lucida Grande", FontWeight.BOLD, FontPosture.REGULAR, 18));
         number.setMaxWidth(100);
-        TextField ip = new TextField();
+        TextField  ip = new TextField();
         ip.setFont(Font.font("Lucida Grande", FontWeight.BOLD, FontPosture.REGULAR, 18));
         ip.setText("192.168.0.216");
+
+
         Label ipl = new Label();
        // ipl.setFont(Font.font("Lucida Grande", FontWeight.BOLD, FontPosture.REGULAR, 18));
        // ipl.setText("192.168.23.9");
@@ -166,32 +168,61 @@ public class CameraMain extends  Application {
 
         /////////////////////////////////////////
         ping.setOnAction(event -> {
-        try {
-            String ipnew;
-
-            ipnew = ip.getText();
-           // ipnew = "192.168.0.216";
 
 
-            String line;
-            String[] cmd = {"cmd.exe", "/c", "ping" + " " + ipnew};
 
-            Process p = Runtime.getRuntime().exec(cmd);
-            BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream(),"866"));
+            Service<Void> service = new Service<Void>() {
+                @Override
+                protected Task<Void> createTask() {
+                    return new Task<Void>() {
+                        @Override
+                        protected Void call() throws Exception {
+                            try {
+                                String ipnew;
 
-           for (int i = 0; i < 6; i++) {
-                line = input.readLine();
-               ipout.appendText(line + "\n");
-            }
-            input.close();
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
+                                ipnew = ip.getText();
+                                // ipnew = "192.168.0.216";
+
+
+                                String line;
+                                String[] cmd = {"cmd.exe", "/c", "ping" + " " + ipnew};
+
+                                Process p = Runtime.getRuntime().exec(cmd);
+                                BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream(),"866"));
+
+                                for (int i = 0; i < 6; i++) {
+                                    line = input.readLine();
+                                    ipout.appendText(line + "\n");
+                                }
+                                input.close();
+                            }
+                            catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                            return null;
+                        }
+                    };
+                }
+            };
+            service.start();
+
+
+
+
+
+
+
+
         });
         ////////////////////////////////////////////
 
 
 
-    }
+
+
+}
+
+
+
 }
